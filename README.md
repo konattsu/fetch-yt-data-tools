@@ -1,4 +1,4 @@
-# youtube-data-api
+# fetch-yt-data-tools
 
 ![Rust](https://img.shields.io/badge/-Rust-6e412b.svg?logo=rust&style=plastic)
 

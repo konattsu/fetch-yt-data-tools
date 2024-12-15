@@ -13,7 +13,7 @@ use crate::{
 // `.toml`内の名前空間が汚れないようにするため
 //
 // `Config`構造体をパースに使用したときの`.toml`
-// [youtube_api]
+// [fetch-yt-data-tools]
 // foo=123
 // bar=true
 // [settings_for_other_systems]
@@ -24,7 +24,7 @@ use crate::{
 
 #[derive(Debug, Deserialize)]
 struct Config {
-    youtube_api: FileSettings,
+    fetch_yt_data_tools: FileSettings,
 }
 
 /// ファイルから取得した情報を格納
@@ -59,7 +59,7 @@ impl FileSettings {
             fs::read_to_string(file).map_err(|e| FileError::Read(e.to_string()))?;
         let config: Config = toml::from_str(&content)
             .map_err(|e| FileError::Deserialize(e.to_string()))?;
-        Ok(config.youtube_api)
+        Ok(config.fetch_yt_data_tools)
     }
 
     pub(super) fn youtube_data_api_key(&self) -> Option<ApiKey> {

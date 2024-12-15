@@ -9,7 +9,7 @@ ENCODING = "utf-8"
 def decision() -> str:
     lists = os.listdir(SRC_DIR)
     for a in lists:
-        if not a.startswith("youtube_api"):
+        if not a.startswith("fetch-yt-data-tools"):
             lists.remove(a)
     lists.sort()
     return os.path.join(SRC_DIR, lists[0])

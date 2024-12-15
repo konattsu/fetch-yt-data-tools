@@ -1,4 +1,4 @@
-use youtube_data_api::{
+use fetch_yt_data_tools::{
     application::YouTubeService,
     auxiliary::{input_urls, settings_cfg::Settings},
     infrastructure::{fetch::ApiClient, output_to_file},

@@ -18,17 +18,14 @@ pub fn apply_tracing_settings(
         .event_format(FormatterForStdout)
         .with_filter(filter_level(stdout_level));
 
-    let file_appender = rolling::daily("./logs", "youtube_api.log");
+    let file_appender = rolling::daily("./logs", "fetch-yt-data-tools.log");
     let (non_blocking, guard) = tracing_appender::non_blocking(file_appender);
     let file_layer = fmt::layer()
         .json()
         .with_writer(non_blocking)
         .with_filter(filter_level(file_level));
 
-    tracing_subscriber::registry()
-        .with(stdout_layer)
-        .with(file_layer)
-        .init();
+    tracing_subscriber::registry().with(stdout_layer).with(file_layer).init();
     guard
 }
 
@@ -86,9 +83,8 @@ where
                 // by the same field formatter that's provided to the event
                 // formatter in the `FmtContext`.
                 let ext = span.extensions();
-                let fields = &ext
-                    .get::<FormattedFields<N>>()
-                    .expect("will never be `None`");
+                let fields =
+                    &ext.get::<FormattedFields<N>>().expect("will never be `None`");
 
                 // Skip formatting the fields if the span had no fields.
                 if !fields.is_empty() {
