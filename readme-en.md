@@ -104,8 +104,7 @@ output_path_without_ext = "./out"
 output_file_ext = "json"
 ```
 
->![INFO]
-> The section name `fetch_yt_data_tools` is required, as in the example above.
+The section name `fetch_yt_data_tools` is required, as in the example above.
 
 It works fine with unspecified values.
 
