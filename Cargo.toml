@@ -2,6 +2,10 @@
 name = "fetch-yt-data-tools"
 version = "0.1.0"
 edition = "2021"
+authors = ["konattsu"]
+license = "Apache-2.0"
+repository = "https://github.com/konattsu/fetch-yt-data-tools/"
+readme = "README.md"
 
 [dependencies]
 reqwest = {version = "0.12", features = ["rustls-tls", "json"]}
