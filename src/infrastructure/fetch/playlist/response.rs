@@ -105,14 +105,6 @@ impl From<SnippetPlaylist> for Item {
             channel_id: value.videoOwnerChannelId,
             channel_title: value.videoOwnerChannelTitle,
         }
-        // Self {
-        //     id: value.resourceId.videoId,
-        //     published_at: value.publishedAt,
-        //     title: value.title,
-        //     description: value.description,
-        //     channel_id: value.videoOwnerChannelId,
-        //     channel_title: value.videoOwnerChannelTitle,
-        // }
     }
 }
 
@@ -153,55 +145,55 @@ impl PlaylistData {
     }
 }
 
-// #[cfg(test)]
-// mod tests {
-//     use chrono::TimeZone;
+#[cfg(test)]
+mod tests {
+    use chrono::TimeZone;
 
-//     use super::*;
+    use super::*;
 
-//     #[test]
-//     fn test_playlist_data_value() {
-//         let data_value = ApiResponse::pl_dummy();
-//         let pl_id = PlaylistId::inc_from_1();
-//         let url_pl = UrlPlaylist::new(Some(VideoId::all_1()), pl_id.clone());
-//         // 正常にパースできるか
+    #[test]
+    fn test_playlist_data_value() {
+        let data_value = ApiResponse::pl_dummy();
+        let pl_id = PlaylistId::inc_from_1();
+        let url_pl = UrlPlaylist::new(Some(VideoId::all_1()), pl_id.clone());
+        // 正常にパースできるか
 
-//         let playlist_data_value =
-//             PlaylistApiResponse::new(&data_value, &url_pl).unwrap();
+        let playlist_data_value =
+            PlaylistApiResponse::new(data_value, &url_pl).unwrap();
 
-//         // 内部値の比較
-//         let published_at = Utc.with_ymd_and_hms(2024, 6, 25, 18, 0, 0).unwrap();
-//         assert_eq!(
-//             playlist_data_value,
-//             PlaylistApiResponse(
-//                 vec![
-//                     Item {
-//                         id: VideoId::all_0(),
-//                         published_at,
-//                         title: "foo_title_0".into(),
-//                         description: "foo_description_0".into(),
-//                         channel_id: "UC7_00000000000000000000".into(),
-//                         channel_title: "foo_channel_title_made_this_video_0".into()
-//                     },
-//                     Item {
-//                         id: VideoId::all_1(),
-//                         published_at,
-//                         title: "foo_title_1".into(),
-//                         description: "foo_description_1".into(),
-//                         channel_id: "UC7_11111111111111111111".into(),
-//                         channel_title: "foo_channel_title_made_this_video_1".into()
-//                     }
-//                 ]
-//                 .into(),
-//                 PlaylistData {
-//                     id: pl_id,
-//                     total: 2,
-//                     specified_directly: Some(VideoId::all_1()),
-//                     next_page_token: Some(PageToken::new_for_test(
-//                         "next_page_token".into()
-//                     ))
-//                 }
-//             )
-//         )
-//     }
-// }
+        // 内部値の比較
+        let published_at = Utc.with_ymd_and_hms(2024, 6, 25, 18, 0, 0).unwrap();
+        assert_eq!(
+            playlist_data_value,
+            PlaylistApiResponse(
+                vec![
+                    Item {
+                        id: VideoId::all_0(),
+                        published_at,
+                        title: "foo_title_0".into(),
+                        description: "foo_description_0".into(),
+                        channel_id: "UC7_00000000000000000000".into(),
+                        channel_title: "foo_channel_title_made_this_video_0".into()
+                    },
+                    Item {
+                        id: VideoId::all_1(),
+                        published_at,
+                        title: "foo_title_1".into(),
+                        description: "foo_description_1".into(),
+                        channel_id: "UC7_11111111111111111111".into(),
+                        channel_title: "foo_channel_title_made_this_video_1".into()
+                    }
+                ]
+                .into(),
+                PlaylistData {
+                    id: pl_id,
+                    total: 2,
+                    specified_directly: Some(VideoId::all_1()),
+                    next_page_token: Some(PageToken::new_for_test(
+                        "next_page_token".into()
+                    ))
+                }
+            )
+        )
+    }
+}

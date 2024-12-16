@@ -107,54 +107,54 @@ impl From<&Item> for FullVideoData {
     }
 }
 
-// #[cfg(test)]
-// mod tests {
-//     use chrono::TimeZone;
+#[cfg(test)]
+mod tests {
+    use chrono::TimeZone;
 
-//     use super::*;
+    use super::*;
 
-//     #[test]
-//     fn test_video_data_value() {
-//         let data_value = ApiResponse::v_dummy();
-//         // 作成できるか
-//         let v_data_value = VideoApiResponse::new(&data_value).unwrap();
-//         let published_at = Utc.with_ymd_and_hms(2024, 6, 25, 18, 0, 0).unwrap();
+    #[test]
+    fn test_video_data_value() {
+        let data_value = ApiResponse::v_dummy();
+        // 作成できるか
+        let v_data_value = VideoApiResponse::new(data_value).unwrap();
+        let published_at = Utc.with_ymd_and_hms(2024, 6, 25, 18, 0, 0).unwrap();
 
-//         // 内部値の比較
-//         assert_eq!(
-//             v_data_value,
-//             VideoApiResponse(
-//                 vec![
-//                     Item {
-//                         id: VideoId::all_0(),
-//                         published_at,
-//                         title: "foo_title_0".into(),
-//                         description: "foo_description_0".into(),
-//                         channel_id: "UC7_00000000000000000000".into(),
-//                         channel_title: "foo_channel_title_made_this_video_0".into(),
-//                         live: Live::Published,
-//                     },
-//                     Item {
-//                         id: VideoId::all_1(),
-//                         published_at,
-//                         title: "foo_title_1".into(),
-//                         description: "foo_description_1".into(),
-//                         channel_id: "UC7_11111111111111111111".into(),
-//                         channel_title: "foo_channel_title_made_this_video_1".into(),
-//                         live: Live::Live,
-//                     },
-//                     Item {
-//                         id: VideoId::all_2(),
-//                         published_at,
-//                         title: "foo_title_2".into(),
-//                         description: "foo_description_2".into(),
-//                         channel_id: "UC7_22222222222222222222".into(),
-//                         channel_title: "foo_channel_title_made_this_video_2".into(),
-//                         live: Live::Upcoming
-//                     }
-//                 ]
-//                 .into()
-//             )
-//         )
-//     }
-// }
+        // 内部値の比較
+        assert_eq!(
+            v_data_value,
+            VideoApiResponse(
+                vec![
+                    Item {
+                        id: VideoId::all_0(),
+                        published_at,
+                        title: "foo_title_0".into(),
+                        description: "foo_description_0".into(),
+                        channel_id: "UC7_00000000000000000000".into(),
+                        channel_title: "foo_channel_title_made_this_video_0".into(),
+                        live: Live::Published,
+                    },
+                    Item {
+                        id: VideoId::all_1(),
+                        published_at,
+                        title: "foo_title_1".into(),
+                        description: "foo_description_1".into(),
+                        channel_id: "UC7_11111111111111111111".into(),
+                        channel_title: "foo_channel_title_made_this_video_1".into(),
+                        live: Live::Live,
+                    },
+                    Item {
+                        id: VideoId::all_2(),
+                        published_at,
+                        title: "foo_title_2".into(),
+                        description: "foo_description_2".into(),
+                        channel_id: "UC7_22222222222222222222".into(),
+                        channel_title: "foo_channel_title_made_this_video_2".into(),
+                        live: Live::Upcoming
+                    }
+                ]
+                .into()
+            )
+        )
+    }
+}

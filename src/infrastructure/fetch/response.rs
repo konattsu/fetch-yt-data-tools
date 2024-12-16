@@ -69,6 +69,13 @@ impl Deref for PageToken {
     }
 }
 
+#[cfg(test)]
+impl PageToken {
+    pub(crate) fn new_for_test(s: String) -> Self {
+        Self(s)
+    }
+}
+
 /// depth: **1**
 ///
 /// https://developers.google.com/youtube/v3/docs/videos
