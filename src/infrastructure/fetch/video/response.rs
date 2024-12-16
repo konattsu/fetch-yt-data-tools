@@ -29,14 +29,9 @@ impl VideoApiResponse {
     }
 
     pub fn get_item_by_id(&self, id: &VideoId) -> Option<FullVideoData> {
-        let mut found_item: Option<&Item> = None;
-        for item in &self.0 {
-            if item.id == *id {
-                found_item = Some(item);
-                break;
-            }
-        }
-        found_item.map(Into::into)
+        let found_item: &Option<FullVideoData> =
+            &self.0.iter().find(|item| item.id == *id).cloned().map(Into::into);
+        found_item.clone()
     }
 }
 
@@ -111,18 +106,50 @@ impl From<&Item> for FullVideoData {
 mod tests {
     use chrono::TimeZone;
 
+    use crate::metadata::BasicVideoData;
+
     use super::*;
+
+    fn video_api_response() -> VideoApiResponse {
+        let data_value = ApiResponse::v_dummy();
+        VideoApiResponse::new(data_value).unwrap()
+    }
+
+    #[test]
+    fn test_video_api_response_from() {
+        // 作成できるか
+        let _video_api_response = video_api_response();
+    }
+
+    #[test]
+    fn test_video_api_response_get_item_by_id() {
+        let id_to_be_found = VideoId::all_1();
+        let full_video_data_to_be_found = FullVideoData {
+            basic_v_data: BasicVideoData {
+                id: VideoId::all_1(),
+                upload_at: Utc.with_ymd_and_hms(2024, 6, 25, 18, 0, 0).unwrap(),
+                title: "foo_title_1".into(),
+                description: "foo_description_1".into(),
+                channel_id: "UC7_11111111111111111111".into(),
+                channel_title: "foo_channel_title_made_this_video_1".into(),
+            },
+            live: Live::Live,
+        };
+
+        assert_eq!(
+            video_api_response().get_item_by_id(&id_to_be_found).unwrap(),
+            full_video_data_to_be_found,
+        );
+    }
 
     #[test]
     fn test_video_data_value() {
-        let data_value = ApiResponse::v_dummy();
-        // 作成できるか
-        let v_data_value = VideoApiResponse::new(data_value).unwrap();
+        let video_api_response = video_api_response();
         let published_at = Utc.with_ymd_and_hms(2024, 6, 25, 18, 0, 0).unwrap();
 
         // 内部値の比較
         assert_eq!(
-            v_data_value,
+            video_api_response,
             VideoApiResponse(
                 vec![
                     Item {
