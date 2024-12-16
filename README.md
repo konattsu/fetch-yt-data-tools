@@ -2,49 +2,62 @@
 
 ![Rust](https://img.shields.io/badge/-Rust-6e412b.svg?logo=rust&style=plastic)
 
-いつか書く
+> [!NOTE]
+> English version is [here](readme-en.md)!
+<!-- >> [!NOTE]
+> このリポジトリを使用した[video_downloader]()では、動画自体のダウンロードも可能です。 -->
 
-<!-- >[!NOTE]
-> English version is [here]()!
-
->[!NOTE]
-> このリポジトリは[video_downloader]()と一緒に使用することで効果を最大限に受けられます。
+> [!NOTE]
+> このプログラムでは動画自体をダウンロードすることはできません。
 
 ## クイックスタート
 
-```rust
-cargo run -n -o ./output.json
+```bash
+cargo run
+```
+
+または、
+
+```bash
+cargo build --release
+./target/release/fetch-yt-data-tools
 ```
 
 ## どんなプログラム?
 
-`YouTube Data Api`を使用して`Url`からYouTube上に投稿されている動画の情報を取得します。タイトルや動画idなどです。
-`YouTube Data Api`の公式ドキュメントは[こちら](https://developers.google.com/youtube/v3?hl=ja)。
+[YouTube Data Api](https://developers.google.com/youtube/v3)を使用してYouTube上の動画情報(タイトルや動画idなど)を取得するツールです。
+
+コンパイルや実行に`cargo`(rustのビルドシステム兼パッケージマネージャー)が必要です。
 
 ## 設定
 
-設定は`コマンドライン引数`, `環境変数`, `設定ファイル(toml)`を用いて行います。
-先に記述してある方が優先度が高いです。
+設定は以下の3つの方法で指定できます。インデックスは優先順位です。
 
-- `LOG_LEVEL`: `TRACE(0)` から `ERROR(5)` までが使用可能です。文字列か数値で指定します。渡さない場合はログが出力されません。ログを出力しなくても動作には問題ありません。
-- `output_file`: この値は上記のいずれかの方法で指定する必要があります。指定されないとプログラムは**終了**します。
-- `YOUTUBE_DATA_API_KEY`: 値が指定されないとプログラム内で入力します。コンソールには出力されません。また、ログ出力されることもありません。
+1. コマンドライン引数
+2. 環境変数
+3. 設定ファイル(toml)
+
+### 設定の値について
+
+- `LOG_LEVEL`: ログレベルを設定します
+    - 値: `TRACE`,`DEBUG`,`INFO`,`WARN`,`ERROR`
+    - 未指定の場合、ログは出力されません。ログ無しでも動作に影響はありません。
+- `YOUTUBE_DATA_API_KEY`: APIキーです。セキュリティ上ログに出力されることはありません。
 
 ### コマンドライン引数
 
-詳細は`-h` または `--help` を使用してください。
+詳細は以下のコマンドで確認できます。
 
-<details>
+```bash
+cargo run -- --help
+```
 
-<summary>出力される内容</summary>
+出力内容
 
 ```txt
-fetch `video_id` using youtube api
+fetch video data using youtube api
 
-Usage: youtube_api.exe [OPTIONS] [YOUTUBE_DATA_API_KEY]
-
-Arguments:
-  [YOUTUBE_DATA_API_KEY]  the key on `YouTube data v3 api` [env: YOUTUBE_DATA_API_KEY=]
+Usage: fetch-yt-data-tools.exe [OPTIONS]
 
 Options:
   -s, --settings-path <SETTINGS_PATH>
@@ -54,50 +67,75 @@ Options:
   -i, --input-api-key
           input api the in the program [env: INPUT_API_KEY=]
       --stdout-log-level <STDOUT_LOG_LEVEL>
-          log level of standard output [env: STDOUT_LOG_LEVEL=]
+          log level of standard output [env: STDOUT_LOG_LEVEL=] [possible values: trace, debug, info, warn, error]
       --file-log-level <FILE_LOG_LEVEL>
-          log level of file output [env: FILE_LOG_LEVEL=]
-  -o, --output-file <OUTPUT_FILE>
-          path to output execution results [env: OUTPUT_FILE=]
+          log level of file output [env: FILE_LOG_LEVEL=] [possible values: trace, debug, info, warn, error]
+  -o, --output-file-without-ext <OUTPUT_FILE_WITHOUT_EXT>
+          path to output fetched data [env: OUTPUT_FILE_WITHOUT_EXT=]
+      --output-file-ext <OUTPUT_FILE_EXT>
+          output file extension [env: OUTPUT_FILE_EXT=] [possible values: json, yaml]
   -h, --help
           Print help
 ```
 
-</details>
-
 ### 環境変数
 
-コマンドライン引数で使用できるオプションを環境変数で使用します。追加で`YOUTUBE_DATA_API_KEY`という環境変数も利用可能です。(このオプションはコマンドライン引数では指定できません。)
+コマンドライン引数で使用できるオプションは全て環境変数でも使用可能です。これに加え以下の変数も使用できます。
+
+- `YOUTUBE_DATA_API_KEY`: APIキーを指定します(コマンドライン引数では使用不可)。
 
 ### 設定ファイル(toml)
 
-設定ファイルは`toml`形式を使用します。パスはデフォルトで`./settings.toml`が指定されています。この値は上記の`コマンドライン引数`または`環境変数`で変更するか、`--no-use-settings-file (-n)`を使用して設定ファイルを使用しないように指定します。
+設定ファイルはTOML形式を使用します。デフォルトでは`./settings.toml`が指定されていますが、以下の方法で変更可能です。
 
-例
+- コマンドライン引数: `--settings-path`オプションを使用
+- 環境変数: `SETTINGA_PATH`を指定
+- 設定ファイルを使用しない場合: `--no-use-settings-file`,`-n`を指定
+
+設定ファイルの例
 
 ```toml
 # ./settings.toml
-[youtube_api]  # ! この記述は必須です。
-youtube_data_api_key = "apiのキー"
-stdout_log_level = "<log_level>"
-file_log_level = "<log_level>"
-output_file = "./output.json"
+[fetch_yt_data_tools]  # ! この記述は必須です。
+youtube_data_api_key = "<key>"
+stdout_log_level = "info"
+file_log_level = "debug"
+output_path_without_ext = "./out"
+output_file_ext = "json"
 ```
 
 >![INFO]
-> 上記例のように[youtube_api]という記述は必須です。
+> 上記例のように`fetch_yt_data_tools`のセクション名は必須です。
 
-これらの値は全てオプションです。一部の値が指定されなくても問題ありません。
+指定されない値があっても問題なく動作します。
 
-## Url
+## 設定の入力
 
-プログラムを実行すると`Url`の入力フェーズへ移行します。
+設定が十分に与えられなかった場合、プログラム実行時にプロンプトで入力を求められます。プロンプトの指示に従うことで設定フェーズを完了できます。
+
+## URLの入力
+
+設定の入力が完了するとURLの入力フェーズへ移行します。
 
 - 不適切: 123ABCabc12
-- 適切: (前略).com/watch?v=123ABCabc12
+- 適切: https://www.youtube.com/watch?v=123ABCabc12
 
-このように`Id`のみの指定ではなく`Url`全体を指定してください。
+> [!IMPORTANT]
+> 動画IDのみでなくURL全体を入力してください。再生リストのURLも使用可能です。
 
-また、再生リストの`Url`でも問題ありません。
+## 取得
 
-## 出力形式
+入力されたURLを基にYouTubeの情報を取得します。この処理ではYouTube APIの`quota`が消費されます。
+
+- quotaの詳細: [公式ドキュメント](https://developers.google.com/youtube/v3/determine_quota_cost)を参照してください。
+- 消費するquotaを最小限に押さえるように設計しています。
+
+## その他
+
+アドバイスや修正案、問題点などございましたら、issue, PRにてご教授いただけますと幸いです。
+
+また、実装等に関する質問も受け付けております。
+
+## License
+
+This project is licensed under the Apache License - see the [LICENSE](./LICENSE) file for details.
