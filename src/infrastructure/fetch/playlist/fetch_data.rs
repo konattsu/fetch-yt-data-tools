@@ -11,7 +11,7 @@ use tracing::Level;
 
 use super::super::{
     api_request::ApiRequest, collections::quota, response::ApiResponse,
-    response::PageToken, ApiKey, ApiOptionKey, FetchError, MaxIdNum,
+    response::PageToken, ApiKey, ApiOptionsPart, FetchError, MaxIdNum,
 };
 use super::response::PlaylistApiResponse;
 use crate::{metadata::BasicPlaylistData, url::UrlPlaylist};
@@ -19,7 +19,7 @@ use crate::{metadata::BasicPlaylistData, url::UrlPlaylist};
 #[derive(Debug)]
 pub struct PlaylistApiClient {
     max_id: MaxIdNum,
-    api_options: ApiOptionKey,
+    api_options: ApiOptionsPart,
     api_key: ApiKey,
     used_quota: Arc<AtomicUsize>,
 }
@@ -30,7 +30,7 @@ impl PlaylistApiClient {
     pub fn new_default(api_key: ApiKey, used_quota: Arc<AtomicUsize>) -> Self {
         Self {
             max_id: MaxIdNum::default(),
-            api_options: ApiOptionKey::default(),
+            api_options: ApiOptionsPart::default(),
             api_key,
             used_quota,
         }

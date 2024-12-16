@@ -16,8 +16,8 @@ impl VideoApiResponse {
         match data_value.get_as_video() {
             Some(items) => Ok(Self(
                 items
-                    .iter()
-                    .map(|item| Item::new_from_id_and_snippet(&item.id, &item.snippet))
+                    .into_iter()
+                    .map(|item| Item::new_from_id_and_snippet(item.id, item.snippet))
                     .collect(),
             )),
             None => Err(
@@ -29,14 +29,9 @@ impl VideoApiResponse {
     }
 
     pub fn get_item_by_id(&self, id: &VideoId) -> Option<FullVideoData> {
-        let mut found_item: Option<&Item> = None;
-        for item in &self.0 {
-            if item.id == *id {
-                found_item = Some(item);
-                break;
-            }
-        }
-        found_item.map(Into::into)
+        let found_item: &Option<FullVideoData> =
+            &self.0.iter().find(|item| item.id == *id).cloned().map(Into::into);
+        found_item.clone()
     }
 }
 
@@ -65,15 +60,15 @@ struct Item {
 }
 
 impl Item {
-    fn new_from_id_and_snippet(id: &VideoId, snippet: &SnippetVideo) -> Self {
-        let common = &snippet.common_snippet;
+    fn new_from_id_and_snippet(id: VideoId, snippet: SnippetVideo) -> Self {
+        let common = snippet.common_snippet;
         Self {
-            id: id.clone(),
+            id,
             published_at: common.publishedAt,
-            title: common.title.clone(),
-            description: common.description.clone(),
-            channel_id: snippet.channelId.clone(),
-            channel_title: snippet.channelTitle.clone(),
+            title: common.title,
+            description: common.description,
+            channel_id: snippet.channelId,
+            channel_title: snippet.channelTitle,
             live: snippet.liveBroadcastContent.into(),
         }
     }
@@ -107,54 +102,86 @@ impl From<&Item> for FullVideoData {
     }
 }
 
-// #[cfg(test)]
-// mod tests {
-//     use chrono::TimeZone;
+#[cfg(test)]
+mod tests {
+    use chrono::TimeZone;
 
-//     use super::*;
+    use crate::metadata::BasicVideoData;
 
-//     #[test]
-//     fn test_video_data_value() {
-//         let data_value = ApiResponse::v_dummy();
-//         // 作成できるか
-//         let v_data_value = VideoApiResponse::new(&data_value).unwrap();
-//         let published_at = Utc.with_ymd_and_hms(2024, 6, 25, 18, 0, 0).unwrap();
+    use super::*;
 
-//         // 内部値の比較
-//         assert_eq!(
-//             v_data_value,
-//             VideoApiResponse(
-//                 vec![
-//                     Item {
-//                         id: VideoId::all_0(),
-//                         published_at,
-//                         title: "foo_title_0".into(),
-//                         description: "foo_description_0".into(),
-//                         channel_id: "UC7_00000000000000000000".into(),
-//                         channel_title: "foo_channel_title_made_this_video_0".into(),
-//                         live: Live::Published,
-//                     },
-//                     Item {
-//                         id: VideoId::all_1(),
-//                         published_at,
-//                         title: "foo_title_1".into(),
-//                         description: "foo_description_1".into(),
-//                         channel_id: "UC7_11111111111111111111".into(),
-//                         channel_title: "foo_channel_title_made_this_video_1".into(),
-//                         live: Live::Live,
-//                     },
-//                     Item {
-//                         id: VideoId::all_2(),
-//                         published_at,
-//                         title: "foo_title_2".into(),
-//                         description: "foo_description_2".into(),
-//                         channel_id: "UC7_22222222222222222222".into(),
-//                         channel_title: "foo_channel_title_made_this_video_2".into(),
-//                         live: Live::Upcoming
-//                     }
-//                 ]
-//                 .into()
-//             )
-//         )
-//     }
-// }
+    fn video_api_response() -> VideoApiResponse {
+        let data_value = ApiResponse::v_dummy();
+        VideoApiResponse::new(data_value).unwrap()
+    }
+
+    #[test]
+    fn test_video_api_response_from() {
+        // 作成できるか
+        let _video_api_response = video_api_response();
+    }
+
+    #[test]
+    fn test_video_api_response_get_item_by_id() {
+        let id_to_be_found = VideoId::all_1();
+        let full_video_data_to_be_found = FullVideoData {
+            basic_v_data: BasicVideoData {
+                id: VideoId::all_1(),
+                upload_at: Utc.with_ymd_and_hms(2024, 6, 25, 18, 0, 0).unwrap(),
+                title: "foo_title_1".into(),
+                description: "foo_description_1".into(),
+                channel_id: "UC7_11111111111111111111".into(),
+                channel_title: "foo_channel_title_made_this_video_1".into(),
+            },
+            live: Live::Live,
+        };
+
+        assert_eq!(
+            video_api_response().get_item_by_id(&id_to_be_found).unwrap(),
+            full_video_data_to_be_found,
+        );
+    }
+
+    #[test]
+    fn test_video_data_value() {
+        let video_api_response = video_api_response();
+        let published_at = Utc.with_ymd_and_hms(2024, 6, 25, 18, 0, 0).unwrap();
+
+        // 内部値の比較
+        assert_eq!(
+            video_api_response,
+            VideoApiResponse(
+                vec![
+                    Item {
+                        id: VideoId::all_0(),
+                        published_at,
+                        title: "foo_title_0".into(),
+                        description: "foo_description_0".into(),
+                        channel_id: "UC7_00000000000000000000".into(),
+                        channel_title: "foo_channel_title_made_this_video_0".into(),
+                        live: Live::Published,
+                    },
+                    Item {
+                        id: VideoId::all_1(),
+                        published_at,
+                        title: "foo_title_1".into(),
+                        description: "foo_description_1".into(),
+                        channel_id: "UC7_11111111111111111111".into(),
+                        channel_title: "foo_channel_title_made_this_video_1".into(),
+                        live: Live::Live,
+                    },
+                    Item {
+                        id: VideoId::all_2(),
+                        published_at,
+                        title: "foo_title_2".into(),
+                        description: "foo_description_2".into(),
+                        channel_id: "UC7_22222222222222222222".into(),
+                        channel_title: "foo_channel_title_made_this_video_2".into(),
+                        live: Live::Upcoming
+                    }
+                ]
+                .into()
+            )
+        )
+    }
+}

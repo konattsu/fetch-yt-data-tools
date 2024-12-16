@@ -1,7 +1,7 @@
 #[derive(Debug, Clone)]
-pub struct ApiOptionKey(Vec<String>);
+pub struct ApiOptionsPart(Vec<String>);
 
-impl ApiOptionKey {
+impl ApiOptionsPart {
     /// キーの詳細については以下参照
     ///
     /// - video:
@@ -13,21 +13,21 @@ impl ApiOptionKey {
     /// `Err`: 必須のオプションが含まれていないとき
     ///
     /// `Self::required_keys()`で確認可能
-    pub fn new(key: Vec<String>) -> Result<Self, String> {
-        let required_keys = Self::required_keys();
+    pub fn new(part: Vec<String>) -> Result<Self, String> {
+        let required_keys = Self::required_parts();
 
-        if !key.iter().any(|part_key| required_keys.contains(part_key)) {
+        if !part.iter().any(|part_key| required_keys.contains(part_key)) {
             Err(format!(
                 "keys:`{}` is required to create `ApiOptionKey`, but gives `{}`",
                 required_keys.join(", "),
-                key.join(", ")
+                part.join(", ")
             ))
         } else {
-            Ok(Self(key))
+            Ok(Self(part))
         }
     }
 
-    pub fn required_keys() -> Vec<String> {
+    pub fn required_parts() -> Vec<String> {
         // 今のところ必須なものが共通なのでこれで大丈夫
         const REQUIRED_KEY_1: &str = "snippet";
         vec![REQUIRED_KEY_1.into()]
@@ -38,9 +38,9 @@ impl ApiOptionKey {
     }
 }
 
-impl Default for ApiOptionKey {
+impl Default for ApiOptionsPart {
     fn default() -> Self {
-        Self::new(Self::required_keys()).unwrap()
+        Self::new(Self::required_parts()).unwrap()
     }
 }
 
@@ -52,16 +52,16 @@ mod tests {
     fn test_api_option_key_for_new() {
         let valid_keys =
             vec!["snippet".to_string(), "foo".to_string(), "bar".to_string()];
-        assert!(ApiOptionKey::new(valid_keys).is_ok());
+        assert!(ApiOptionsPart::new(valid_keys).is_ok());
 
         let invalid_keys = vec!["foo".to_string(), "bar".to_string()];
-        assert!(ApiOptionKey::new(invalid_keys).is_err());
+        assert!(ApiOptionsPart::new(invalid_keys).is_err());
     }
 
     #[test]
     fn test_api_option_key_for_join() {
         let keys = vec!["snippet".to_string(), "foo".to_string()];
-        let api_option_key = ApiOptionKey::new(keys).unwrap();
+        let api_option_key = ApiOptionsPart::new(keys).unwrap();
         assert_eq!(api_option_key.join(","), "snippet,foo");
     }
 }
