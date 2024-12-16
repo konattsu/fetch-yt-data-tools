@@ -61,7 +61,7 @@ impl From<FullData> for BasicData {
             FullData::Video(v) => v.basic_v_data.into(),
             FullData::Playlist(pl) => {
                 let playlist_data_itself = pl.playlist_data_itself;
-                // ここのIntoは中身に対して`DetailedVideoData`=>`BasicVideoData`
+                // ここのIntoは中身に対して`FullVideoData`=>`BasicVideoData`
                 Self::Playlist(BasicPlaylistData {
                     videos: pl.videos.into_iter().map(Into::into).collect(),
                     playlist_data_itself,
