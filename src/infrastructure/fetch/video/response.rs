@@ -16,8 +16,8 @@ impl VideoApiResponse {
         match data_value.get_as_video() {
             Some(items) => Ok(Self(
                 items
-                    .iter()
-                    .map(|item| Item::new_from_id_and_snippet(&item.id, &item.snippet))
+                    .into_iter()
+                    .map(|item| Item::new_from_id_and_snippet(item.id, item.snippet))
                     .collect(),
             )),
             None => Err(
@@ -60,15 +60,15 @@ struct Item {
 }
 
 impl Item {
-    fn new_from_id_and_snippet(id: &VideoId, snippet: &SnippetVideo) -> Self {
-        let common = &snippet.common_snippet;
+    fn new_from_id_and_snippet(id: VideoId, snippet: SnippetVideo) -> Self {
+        let common = snippet.common_snippet;
         Self {
-            id: id.clone(),
+            id,
             published_at: common.publishedAt,
-            title: common.title.clone(),
-            description: common.description.clone(),
-            channel_id: snippet.channelId.clone(),
-            channel_title: snippet.channelTitle.clone(),
+            title: common.title,
+            description: common.description,
+            channel_id: snippet.channelId,
+            channel_title: snippet.channelTitle,
             live: snippet.liveBroadcastContent.into(),
         }
     }
