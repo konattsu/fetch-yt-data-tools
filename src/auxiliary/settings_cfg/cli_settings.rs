@@ -3,9 +3,9 @@ use std::{path::PathBuf, str::FromStr};
 use tracing::level_filters::LevelFilter;
 
 use super::{output_file::OutputFile, ApiKey, PathBufValidUtf8};
-use crate::infrastructure::output_to_file::OutputFileExt;
+use crate::infrastructure::output_to_file::OutputFileExt as InfraOutputFileExt;
 
-/// fetch `video_id` using youtube api
+/// fetch video data using youtube api
 #[derive(Debug, Parser)]
 pub(super) struct CliSettings {
     // how to load settings
@@ -33,10 +33,10 @@ pub(super) struct CliSettings {
     file_log_level: Option<LogLevel>,
 
     // output
-    /// path to output execution results
+    /// path to output fetched data
     #[arg(short, long, env)]
     output_file_without_ext: Option<OutputFile>,
-    /// information to be included in the output file
+    /// output file extension
     #[arg(long, env)]
     output_file_ext: Option<OutputFileExt>,
 }
@@ -90,8 +90,8 @@ impl CliSettings {
     pub(super) fn output_file(&self) -> Option<PathBufValidUtf8> {
         self.output_file_without_ext.clone().map(|f| f.get_path())
     }
-    pub(super) fn output_file_ext(&self) -> Option<OutputFileExt> {
-        self.output_file_ext
+    pub(super) fn output_file_ext(&self) -> Option<InfraOutputFileExt> {
+        self.output_file_ext.map(Into::into)
     }
 }
 
@@ -112,6 +112,21 @@ impl From<LogLevel> for LevelFilter {
             LogLevel::Info => LevelFilter::INFO,
             LogLevel::Warn => LevelFilter::WARN,
             LogLevel::Error => LevelFilter::ERROR,
+        }
+    }
+}
+
+#[derive(ValueEnum, Debug, PartialEq, Eq, Clone, Copy)]
+enum OutputFileExt {
+    Json,
+    Yaml,
+}
+
+impl From<OutputFileExt> for InfraOutputFileExt {
+    fn from(value: OutputFileExt) -> Self {
+        match value {
+            OutputFileExt::Json => InfraOutputFileExt::Json,
+            OutputFileExt::Yaml => InfraOutputFileExt::Yaml,
         }
     }
 }
