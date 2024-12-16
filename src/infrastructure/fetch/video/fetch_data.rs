@@ -12,7 +12,7 @@ use tracing::Level;
 // crate
 use super::super::{
     api_request::ApiRequest, collections::quota, response::ApiResponse, ApiKey,
-    ApiOptionKey, FetchError, MaxIdNum,
+    ApiOptionsPart, FetchError, MaxIdNum,
 };
 use super::response::VideoApiResponse;
 use crate::{id::VideoId, metadata::FullVideoData, url::UrlVideo};
@@ -20,7 +20,7 @@ use crate::{id::VideoId, metadata::FullVideoData, url::UrlVideo};
 #[derive(Debug)]
 pub struct VideoApiClient {
     max_id: MaxIdNum,
-    api_options: ApiOptionKey,
+    api_options: ApiOptionsPart,
     api_key: ApiKey,
     used_quota: Arc<AtomicUsize>,
 }
@@ -31,7 +31,7 @@ impl VideoApiClient {
     pub fn new_default(api_key: ApiKey, used_quota: Arc<AtomicUsize>) -> Self {
         Self {
             max_id: MaxIdNum::default(),
-            api_options: ApiOptionKey::default(),
+            api_options: ApiOptionsPart::default(),
             api_key,
             used_quota,
         }

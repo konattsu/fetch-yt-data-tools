@@ -36,7 +36,6 @@ impl FetchBasicDataTrait for ApiClient {
         &self,
         urls: VecDeque<Url>,
     ) -> Result<VecDeque<Result<BasicData, Url>>, crate::Error> {
-        tracing::debug!("async fn:`using_urls` is called");
         let (urls_v, urls_pl) = Url::separate_urls(urls);
         let mut res: VecDeque<Result<BasicData, Url>> = VecDeque::new();
 
