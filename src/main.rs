@@ -6,7 +6,6 @@ use fetch_yt_data_tools::{
 };
 
 // このクレート単体で実行することないので多少汚くて大丈夫
-// TODO lib.rs整える
 #[tokio::main]
 async fn main() {
     let settings = Settings::load();
